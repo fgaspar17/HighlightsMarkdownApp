@@ -1,0 +1,178 @@
+﻿<Page
+    x:Class="HighlightsMarkdownApp.BookmarksPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HighlightsMarkdownApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid RowDefinitions="Auto,*">
+        <CommandBar>
+            <AppBarButton
+                Icon="Refresh"
+                Label="Refresh"
+                Command="{Binding RefreshCommand}" />
+
+
+            <AppBarButton
+                Icon="SelectAll"
+                Label="Select All"
+                Command="{Binding SelectAllCommand}" />
+
+            <AppBarButton
+                Icon="ClearSelection"
+                Label="Clear"
+                Command="{Binding ClearSelectionCommand}" />
+
+            <AppBarButton
+                Icon="Share"
+                Label="Export"
+                Command="{Binding ExportSelectedCommand}" />
+
+        </CommandBar>
+
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Search -->
+                <RowDefinition Height="*"/>
+                <!-- List -->
+            </Grid.RowDefinitions>
+            
+            <TextBox
+                Grid.Row="0"
+                PlaceholderText="Search bookmarks..."
+                Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+            <RefreshContainer RefreshRequested="OnRefreshRequested" Grid.Row="1">
+                <ListView
+                    x:Name="BookmarksList"
+                    ItemsSource="{Binding FilteredBookmarks}"
+                    SelectionMode="None">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border x:Name="RootBorder"
+                                    Padding="12"
+                                    Margin="8"
+                                    CornerRadius="8"
+                                    Background="Transparent">
+
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup>
+                                        <VisualState x:Name="Normal"/>
+
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Target="RootBorder.Background"
+                                        Value="#22000000"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="2">
+
+                                        <!-- Checkbox -->
+                                        <CheckBox
+                                            Grid.Column="0"
+                                            IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,4,0">
+
+                                            <!-- Título -->
+                                            <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding Title}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            TextWrapping="Wrap"
+                                            VerticalAlignment="Center"/>
+                                        </CheckBox>
+
+                                        <!-- Estrella -->
+                                        <SymbolIcon
+                                            Grid.Column="2"
+                                            Symbol="Favorite"
+                                            Foreground="Gold"
+                                            VerticalAlignment="Center"
+                                            Visibility="{Binding IsStarred, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    </StackPanel>
+
+                                    <!-- URL -->
+                                    <HyperlinkButton
+        Content="{Binding Url}"
+        FontSize="12"
+        Opacity="0.6"
+        Click="OnUrlClicked"/>
+
+                                    <!-- Highlights -->
+                                    <TextBlock
+        Text="{Binding HighlightsCountText}"
+        FontSize="10"
+        FontWeight="SemiLight"/>
+
+                                    <!-- Fecha -->
+                                    <TextBlock
+        Text="{Binding Time, Converter={StaticResource UnixToDateConverter}}"
+        FontSize="11"
+        Opacity="0.5"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </RefreshContainer>
+
+            <!-- DIM LAYER -->
+            <Border
+        Background="#66000000"
+        Visibility="{Binding IsExporting, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <!-- OVERLAY -->
+            <StackPanel
+        Visibility="{Binding IsExporting, Converter={StaticResource BoolToVisibilityConverter}}"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+        Padding="20"
+        Spacing="12"
+        CornerRadius="8">
+
+                <TextBlock
+            Text="Exporting bookmarks..."
+            FontSize="16"
+            FontWeight="SemiBold"/>
+
+                <ProgressBar
+            Width="250"
+            Value="{Binding ExportProgress}"/>
+
+                <TextBlock
+            Text="{Binding ExportStatus}"
+            HorizontalAlignment="Center"/>
+
+            </StackPanel>
+
+
+
+            <TextBlock
+                Grid.Row="1"
+                Text="No bookmarks yet"
+                Visibility="{Binding ShowEmptyState, Converter={StaticResource BoolToVisibilityConverter}}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+
+            <ProgressRing
+                Grid.Row="1"
+                IsActive="{Binding IsLoading}"
+                Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+        </Grid>
+    </Grid>
+
+</Page>

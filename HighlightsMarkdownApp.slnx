@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="HighlightsMarkdownApp.Tests/HighlightsMarkdownApp.Tests.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Project Path="HighlightsMarkdown.Core/HighlightsMarkdown.Core.csproj" Id="310c7df2-c008-41ff-8160-bbf9fc725c51" />
+  <Project Path="HighlightsMarkdownApp/HighlightsMarkdownApp.csproj">
+    <Deploy />
+  </Project>
+</Solution>
